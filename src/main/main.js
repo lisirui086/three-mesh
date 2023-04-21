@@ -1,5 +1,5 @@
 /* 
-  纹理显示的算法
+  透明纹理
 */
 // 1. 引入threejs
 import * as THREE from 'three'
@@ -9,13 +9,15 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import green from '../assets/image/green.png'
 import desert from '../assets/image/desert.jpg'
 import people from '../assets/image/people.jpg'
+import door from '../assets/image/textures/door/color.jpg'
+import alphaMap from '../assets/image/textures/door/alpha.jpg'
 // 16*16
 import kenan16 from '../assets/image/1616.png'
 // 引入纹理
-const texture = new THREE.TextureLoader().load(kenan16)
-// 纹理显示
-texture.minFilter = THREE.NearestFilter
-texture.magFilter = THREE.NearestFilter
+const texture = new THREE.TextureLoader().load(door)
+// 透明纹理
+const alphaMaptexture = new THREE.TextureLoader().load(alphaMap)
+
 // 2. 创建摄像机
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -32,11 +34,25 @@ const geomtry = new THREE.BoxGeometry(1, 1, 1)
 // 添加材质
 const basicMaterial = new THREE.MeshBasicMaterial({
   color: '#ffffff',
-  map: texture
+  map: texture,
+  alphaMap: alphaMaptexture,
+  transparent: true,
+  // opacity: 0.3,
+  side: THREE.DoubleSide
 })
 const cube = new THREE.Mesh(geomtry, basicMaterial)
 // 添加物体
 scene.add(cube)
+// 添加平面
+const plane = new THREE.Mesh(
+  // 设置几何体
+  new THREE.PlaneGeometry(1, 1),
+  basicMaterial
+)
+// 平面偏移
+plane.position.set(3,0,0)
+// 将平面添加到场景
+scene.add(plane)
 // 4.1 初始化渲染器
 const rennder = new THREE.WebGLRenderer({ antialias: true })
 // 4.2 设置渲染器的尺寸大小
