@@ -1,5 +1,5 @@
 /* 
-  BufferGeometry生成酷炫三角形科技物体
+  BufferGeometry设置顶点创建矩形
 */
 // 1. 引入threejs
 import * as THREE from 'three'
@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // 2. 创建摄像机
 const camera = new THREE.PerspectiveCamera(
-  75,
+  45,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
@@ -24,27 +24,13 @@ const vertice = new Float32Array([
   -1.0, 1.0, 1.0,
   -1.0, -1.0, 1.0
 ])
-// 创建几何体
-for (let i = 0; i < 50; i++){
-  // 每个三角形，需要三个顶点，每个顶点需要三个值
-  const geometry = new THREE.BufferGeometry()
-  const positionArray = new Float32Array(9)
-  for (let j = 0; j < 9; j++){
-    positionArray[j] = Math.random() * 10 - 5
-  }
-  // 设置顶点
-  geometry.setAttribute('position', new THREE.BufferAttribute(positionArray, 3))
-  // 3.2 创建材质
-  // 颜色随机
-  const color = new THREE.Color(Math.random(), Math.random(), Math.random())
-  // transparent开启透明，opacity透明度
-  const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity:0.3, })
-  // 3.3 根据几何体和材质创建物体
-  const mesh = new THREE.Mesh(geometry, material)
-  scene.add(mesh)
-}
-
-
+const geometry = new THREE.BufferGeometry()
+// 设置顶点
+geometry.setAttribute('position', new THREE.BufferAttribute( vertice, 3))
+// 3.2 创建材质
+const material = new THREE.MeshBasicMaterial({ color: 0x00a2ff })
+// 3.3 根据几何体和材质创建物体
+const mesh = new THREE.Mesh(geometry, material)
 // 4.1 初始化渲染器
 const rennder = new THREE.WebGLRenderer({ antialias: true })
 // 4.2 设置渲染器的尺寸大小
@@ -57,7 +43,7 @@ const axesHelper = new THREE.AxesHelper(5)
 scene.add(axesHelper)
 // 2.1 将相机、物体添加到场景
 scene.add(camera)
-
+scene.add(mesh)
 rennder.setAnimationLoop( animation );
 // 5 将WebGL渲染到canvas内容中添加到body
 document.body.appendChild(rennder.domElement)
@@ -69,14 +55,3 @@ function animation( time ) {
 
 	rennder.render( scene, camera );
 }
-// 侦听画面变化， 更新渲染画面
-window.addEventListener('resize', () => {
-  // 更新摄像头
-  camera.aspect = (window.innerWidth/window.innerHeight)
-  // 更新摄像机的投影矩阵
-  camera.updateProjectionMatrix()
-  // 更新渲染器
-  rennder.setSize(window.innerWidth, window.innerHeight)
-  // 设置渲染器的像素比
-  rennder.setPixelRatio(window.devicePixelRatio)
-})
