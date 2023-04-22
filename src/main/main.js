@@ -1,5 +1,5 @@
 /* 
-  法线贴图应用
+  纹理加载进度情况
 */
 // 1. 引入threejs
 import * as THREE from 'three'
@@ -25,20 +25,53 @@ import roughnessTextureImg from '../assets/image/textures/door/roughness.jpg'
 import metalnessTextureImg from '../assets/image/textures/door/metalness.jpg'
 // 法线图
 import normalTextureImg from '../assets/image/textures/door/normal.jpg'
+var div = document.createElement('div')
+div.style.width = '200px'
+div.style.height = '200px'
+div.style.position = 'fixed'
+div.style.right = 0
+div.style.top = 0
+div.style.color = '#fff'
+document.appendChild(div)
+// 加载完成时将调用
+function onLoad() {
+  console.log('加载完成时将调用')
+}
+// 加载过程中进行调用
+function onProgress(url,num,total) {
+  console.log('图片地址：', url)
+  console.log('当前第几张图：',num)
+  console.log('图片总数：', total)
+  // 存储进度
+  let value = ((num / total) * 100).toFixed(0) + '%'
+  console.log("加载进度:", value)
+  // 插入value内容
+  div.innerHTML = value
+}
+// 加载错误时被调用
+function onError(e) {引入纹理
+  console.log(e)
+  console.log('在加载错误时被调用')
+}
+// 设置加载管理器
+const loadingManager = new THREE.LoadingManager(
+  onLoad,onProgress, onError
+)
+const textureLoader = new THREE.TextureLoader(loadingManager)
 // 引入纹理
-const texture = new THREE.TextureLoader().load(door)
+const texture = textureLoader.load(door)
 // 透明纹理
-const alphaMaptexture = new THREE.TextureLoader().load(alphaMap)
+const alphaMaptexture = textureLoader.load(alphaMap)
 // Ao
-const doorAoTexture = new THREE.TextureLoader().load(doorAoTextureImg)
+const doorAoTexture = textureLoader.load(doorAoTextureImg)
 // 光照置换图
-const doorHightTexture = new THREE.TextureLoader().load(doorHightTextureImg)
+const doorHightTexture = textureLoader.load(doorHightTextureImg)
 // 粗糙贴图
-const roughnessTexture = new THREE.TextureLoader().load(roughnessTextureImg)
+const roughnessTexture = textureLoader.load(roughnessTextureImg)
 // 金属图
-const metalnessTexture = new THREE.TextureLoader().load(metalnessTextureImg)
+const metalnessTexture = textureLoader.load(metalnessTextureImg)
 // 法线图
-const normalTexture = new THREE.TextureLoader().load(normalTextureImg)
+const normalTexture = textureLoader.load(normalTextureImg)
 
 // 2. 创建摄像机
 const camera = new THREE.PerspectiveCamera(
