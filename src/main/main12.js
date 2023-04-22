@@ -1,5 +1,5 @@
 /* 
-  金属度与金属贴图
+  金属度与金属度贴图
 */
 // 1. 引入threejs
 import * as THREE from 'three'
@@ -21,7 +21,7 @@ import doorHightTextureImg from '../assets/image/textures/door/height.jpg'
 import kenan16 from '../assets/image/1616.png'
 // 粗糙图
 import roughnessTextureImg from '../assets/image/textures/door/roughness.jpg'
-// 今属土
+// 金属图
 import metalnessTextureImg from '../assets/image/textures/door/metalness.jpg'
 // 引入纹理
 const texture = new THREE.TextureLoader().load(door)
