@@ -1,42 +1,12 @@
 /* 
-  经纬线映射贴图与HDR
+  灯光与阴影的关系
 */
 // 1. 引入threejs
 import * as THREE from 'three'
 // 引入轨道控制器
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-// 引入RGBLoader
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 // 2. 创建场景
 const scene = new THREE.Scene()
-// 加载rgb环境图
-const rgbeLoader = new RGBELoader()
-import rgbTextureImg from '../assets/image/textures/hdr/002.hdr'
-rgbeLoader.loadAsync(rgbTextureImg).then(texture => {
-  // 给场景添加背景
-  scene.background = texture
-  scene.environment = texture
-  texture.mapping = THREE.EquirectangularReflectionMapping
-})
-// 设置cube纹理加器
-// 环境纹理
-// 六张图片分别是朝前的（posz）、朝后的（negz）、
-// 朝上的（posy）、朝下的（negy）、
-// 朝右的（posx）和朝左的（negx）。
-// 设置cube纹理加载器
-const cubeTextureLoader = new THREE.CubeTextureLoader()
-import px from '../assets/image/textures/environmentMaps/1/px.jpg'
-import nx from '../assets/image/textures/environmentMaps/1/nx.jpg'
-import py from '../assets/image/textures/environmentMaps/1/py.jpg'
-import ny from '../assets/image/textures/environmentMaps/1/ny.jpg'
-import pz from '../assets/image/textures/environmentMaps/1/pz.jpg'
-import nz from '../assets/image/textures/environmentMaps/1/nz.jpg'
-const envMapTexture = cubeTextureLoader.load([
-  px, nx,
-  py, ny,
-  pz,nz
-])
-
 // 2. 创建摄像机
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -50,43 +20,43 @@ scene.add(camera)
 // 添加环境光
 const light = new THREE.AmbientLight(0xffffff)
 // 添加平行光
-const directional = new THREE.DirectionalLight(0xffffff, 0.5)
+const directional = new THREE.DirectionalLight(0xffffff, 1)
 // 设置平行光照射位置
 directional.position.set(10, 10, 10)
+// 产生动态阴影
+directional.castShadow = true
 // 将环境光添加到场景
-scene.add(light)
+// scene.add(light)
 scene.add(directional)
 // 创建几何体 物体
 const sphereGeometry = new THREE.SphereGeometry(1, 20, 20)
-// 添加vu2
-/* sphereGeometry.setAttribute(
-  'uv2',
-  new THREE.BufferAttribute(sphereGeometry.attributes.uv.array, 2)
-) */
 // 标准网格材质 创建材质
-const meshMaterial = new THREE.MeshStandardMaterial({
-  // 设置金属度
-  metalness: 0.7,
-  // // 粗糙度
-  roughness: 0.1,
-  // 设置环境纹理
-  // envMap: envMapTexture
-})
-// 将环境贴图应用到场景背景
-// scene.background = envMapTexture
-// 给场景所有物体添加默认的环境贴图
-scene.environment = envMapTexture
+const meshMaterial = new THREE.MeshStandardMaterial({})
 // 球体
 const sphere = new THREE.Mesh(sphereGeometry, meshMaterial)
+// 球体投射阴影
+sphere.castShadow = true
 // 将球体添加到场景
 scene.add(sphere)
-
-
+// 创建几何体 平面
+const planeGeometry = new THREE.PlaneGeometry(10, 10)
+// 平面
+const plane = new THREE.Mesh(planeGeometry, meshMaterial)
+// 将平面偏移
+plane.position.set(0, -1, 0)
+// 将平面旋转
+plane.rotation.x = -Math.PI / 2
+// 平面接收阴影
+plane.receiveShadow = true
+// 将平面添加到场景
+scene.add(plane)
 
 // 4.1 初始化渲染器
 const rennder = new THREE.WebGLRenderer({ antialias: true })
 // 4.2 设置渲染器的尺寸大小
 rennder.setSize(window.innerWidth, window.innerHeight)
+// 开启场景中的阴影图
+rennder.shadowMap.enabled = true
 // 添加轨道控制器
 const controls = new OrbitControls(camera, rennder.domElement)
 // 添加辅助对象
