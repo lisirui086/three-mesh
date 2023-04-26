@@ -102,6 +102,7 @@ document.body.appendChild(rennder.domElement)
 rennder.render(scene, camera)
 function animation() {
   let timer = clock.getElapsedTime()
+  // 谨慎开启比较消耗cpu
   // console.log('timer是：', timer)
   /* smallBall.position.x = Math.sin(timer) * 3
   smallBall.position.z = Math.cos(timer) * 3
